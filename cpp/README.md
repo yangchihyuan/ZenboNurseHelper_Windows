@@ -1,30 +1,15 @@
-This folder contains the code files for the server side program of ZenboNurseHelper. It provides an Graphic User Interface (GUI) for a user to remotely control the robot's action. The GUI currently looks like the image below and allows a user to send commands to the robot-side's app, which calls Zenbo SDK to execute those commands.
+This folder contains the code files for the server-side program of ZenboNurseHelper for the Windows platform. It provides an Graphic User Interface (GUI) for a user to remotely control the robot's action. The GUI currently looks like the image below and allows a user to send commands to the robot-side's app, which calls Zenbo SDK to execute those commands.
 
-![GUI](GUI.jpg "GUI")
+![GUI_Windows](GUI_Windows.jpg "GUI Windows")
 
 In this project, we utilize Intel OpenVINO's human_pose_estimation_demo in their Open Model Zoo 2024 demos as a tool to guide our Zenbo robot. Our server-side program receives frames transmitted from the robot-side app, estimates human pose landmark coordinates, and reports the results to the robot-side program.
 
 # OpenVINO Setting
-Please download the Intel OpenVINO 2024.3's Ubuntu 24 archive. There are many ways to install OpenVINO [(Link)](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/download.html). For our case, we should use the archive file because it contains a setupvars.sh file, which is required by the open_model_zoo demo code.
-```sh
-cd ~
-wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz
-```
-Unzip the file
-```sh
-tar -xvzf l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz
-```
-Create a symbolic link
-```sh
-ln -s l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64 OpenVINO
-```
-Delete the downloaded file
-```sh
-rm l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz
-```
+Please download the Intel OpenVINO 2024.3's Windows archive [(Link)](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/download.html?PACKAGE=OPENVINO_BASE&VERSION=v_2024_3_0&OP_SYSTEM=WINDOWS&DISTRIBUTION=ARCHIVE). There are many ways to install OpenVINO, and for our case, we should use the archive file because it contains a setupvars.bat file, which is required by the open_model_zoo demo code. Suppose the name of the downloaded archive file is w_openvino_toolkit_windows_2024.3.0.16041.1e3b88e4e3f_x86_64.zip. Open it using your File Explore, and unzip the file. You should get a folder w_openvino_toolkit_windows_2024.3.0.16041.1e3b88e4e3f_x86_64. Rename it to OpenVINO and copy the OpenVINO to your home folder, which is usually C:\Users\<your_user_name>, and you will have a new folder C:\Users\<your_user_name>\OpenVINO. Then, you can delete the downloaded zip file w_openvino_toolkit_windows_2024.3.0.16041.1e3b88e4e3f_x86_64.zip.
 
+Download the open_model_zoo code by
 ```sh
-cd ~
+cd C:\Users\<your_user_name>
 git clone --recurse-submodules https://github.com/openvinotoolkit/open_model_zoo.git
 ```
 We need a pretrained model human-pose-estimation-0001.xml and its bin file used in the human_pose_estimation_demo, which is a part of the OpenPose algorithm.
