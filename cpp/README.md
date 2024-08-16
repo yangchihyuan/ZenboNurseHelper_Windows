@@ -7,34 +7,52 @@ In this project, we utilize Intel OpenVINO's human_pose_estimation_demo in their
 # OpenVINO Setting
 Please download the Intel OpenVINO 2024.3's Windows archive [(Link)](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/download.html?PACKAGE=OPENVINO_BASE&VERSION=v_2024_3_0&OP_SYSTEM=WINDOWS&DISTRIBUTION=ARCHIVE). There are many ways to install OpenVINO, and for our case, we should use the archive file because it contains a setupvars.bat file, which is required by the open_model_zoo demo code. Suppose the name of the downloaded archive file is w_openvino_toolkit_windows_2024.3.0.16041.1e3b88e4e3f_x86_64.zip. Open it using your File Explore, and unzip the file. You should get a folder w_openvino_toolkit_windows_2024.3.0.16041.1e3b88e4e3f_x86_64. Rename it to OpenVINO and copy the OpenVINO to your home folder, which is usually C:\Users\\<your_user_name>, and you will have a new folder C:\Users\\<your_user_name>\OpenVINO. Then, you can delete the downloaded zip file w_openvino_toolkit_windows_2024.3.0.16041.1e3b88e4e3f_x86_64.zip.
 
-Download the open_model_zoo code by
+## Install Git for Windows
+Please download Git for Windows from this [(Link)](https://git-scm.com/download/win). There is no significant difference between the 32-bit and 64-bit versions. We suggest using the 64 bit version. There are many options available when you install Git for Windows. If you do not know how to choose them, it is enough for us to use the default ones.
+
+## Download open_model_zoo sample code
+Launch the CMD (command line) program and download the open_model_zoo code by
 ```sh
 cd C:\Users\<your_user_name>
 git clone --recurse-submodules https://github.com/openvinotoolkit/open_model_zoo.git
 ```
 We need a pretrained model human-pose-estimation-0001.xml and its bin file used in the human_pose_estimation_demo, which is a part of the OpenPose algorithm.
 To download the model, we use a Python tool package omz_tools, whose installation instruction is a part of the open_model_zoo. See [(Link)](https://github.com/openvinotoolkit/open_model_zoo/blob/master/tools/model_tools/README.md).
-However, Windows 11 does not contain the Python program by default. If you do not have Python installed, please follow the instruction below.
+However, Windows 11 does not contain a Python program by default. If you do not have Python installed, please follow the instruction below.
 
 ## Install Python
 First, do not install the Python program provided by the Windows Store, which will install the Python program in your personal folder such as C:\Users\\<your_user_name>\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0. The length of the folder is very long in terms of the full path. When you install the omz_tools, the process will halt because omz_tools contains some files whose path and file names are too long to be install on a Windows system. By default, Windows only allows 256 characters for a file's full length. Although this setting is adjustable, we do not want to modify it.   
 
+We suggest installing the Python program from Python Foundation's setup file [(Link)](https://www.python.org/downloads/). Regarding the version, we suggest 3.12.5 because it is the newest and stable one. When you install Python, choose the Customize installation and check the "Add python.exe to PATH".
+
+![Python_installation](Python_installation.jpg "Python_installation")
+
+In this page, mark this checkbox "Install Python 3.12 for all users" to make the folder length shorter.
+
+![Python_installation_all_users](Python_installation_all_users.jpg "Python_installation_all_users")
+
+At the end of the installation process, will see you an option to disable path length limit.
+
+![Python_installation_path_limit](Python_installation_path_limit.jpg "Python_installation_path_limit")
+
+If you are a system manager, do it and you will not be bothered by the path length limit.
+If your CMD window for downloading the open_model_zoo code is still open, close it and re-launch the CMD program to because python.exe is just added into the PATH environment variable.
+After installing Python, you can follow open_model_zoo's installation instructions to install the setuptools package.
 ```sh
-sudo apt install python3-pip
+pip install setuptools
 ```
-This command also installs the setuptools package, which is equivalent to the open_model_zoo's installation instruction "pip install setuptools".
-Thereafter, we install the the openvino-dev package. Because Ubuntu 24.04 prevent system-wide Python package installation, we need to modify Intel's instruction by replacing "pip install openvino-dev" to
+And the the openvino-dev package.
 ```sh
-pip install openvino-dev --break-system-packages
+pip install openvino-dev
 ```
-Navigate to the open_model_zoo/tools/model_tools directory, and install the omz_tools package
+Navigate to the open_model_zoo\tools\model_tools directory, and install the omz_tools package
 ```sh
-cd ~/open_model_zoo/tools/model_tools
-pip install . --break-system-packages
+cd C:\Users\\<your_user_name>\open_model_zoo\tools\model_tools
+pip install .
 ```
-After installing the model_tools package, we use this command to download the human-pose-estimation models from a file server.
+After installing the model_tools package, use this command to download the human-pose-estimation models from a file server.
 ```sh
-python3 ~/open_model_zoo/tools/model_tools/src/omz_tools/omz_downloader.py --list ~/open_model_zoo/demos/human_pose_estimation_demo/cpp/models.lst -o ~/open_model_zoo/models
+python ~/open_model_zoo/tools/model_tools/src/omz_tools/omz_downloader.py --list ~/open_model_zoo/demos/human_pose_estimation_demo/cpp/models.lst -o ~/open_model_zoo/models
 ```
 It will download 23 files saved in ~/open_model_zoo/models/intel and ~/open_model_zoo/models/public although we only need 2 of them. However, this command is better than the Intel's instruction "omz_downloader --all" because it will download a lot of files and take a long time.
 
