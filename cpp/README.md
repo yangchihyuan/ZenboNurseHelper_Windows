@@ -13,7 +13,7 @@ Please download Git for Windows from this [(Link)](https://git-scm.com/download/
 ## Download open_model_zoo sample code
 Launch the CMD (command line) program and download the open_model_zoo code by
 ```sh
-cd C:\Users\<your_user_name>
+cd %userprofile%
 git clone --recurse-submodules https://github.com/openvinotoolkit/open_model_zoo.git
 ```
 We need a pretrained model human-pose-estimation-0001.xml and its bin file used in the human_pose_estimation_demo, which is a part of the OpenPose algorithm.
@@ -25,15 +25,15 @@ First, do not install the Python program provided by the Windows Store, which wi
 
 We suggest installing the Python program from Python Foundation's setup file [(Link)](https://www.python.org/downloads/). Regarding the version, we suggest 3.12.5 because it is the newest and stable one. When you install Python, choose the Customize installation and check the "Add python.exe to PATH".
 
-![Python_installation](Python_installation.jpg "Python_installation")
+<img src="Python_Installation.jpg" alt="Python_Installation" height="150"/>
 
 In this page, mark this checkbox "Install Python 3.12 for all users" to make the folder length shorter.
 
-![Python_installation_all_users](Python_installation_all_users.jpg "Python_installation_all_users")
+<img src="Python_Installation_all_users.jpg" alt="Python_Installation_all_users" height="150"/>
 
 At the end of the installation process, will see you an option to disable path length limit.
 
-![Python_installation_path_limit](Python_installation_path_limit.jpg "Python_installation_path_limit")
+<img src="Python_Installation_path_limit.jpg" alt="Python_Installation_path_limit" height="150"/>
 
 If you are a system manager, do it and you will not be bothered by the path length limit.
 If your CMD window for downloading the open_model_zoo code is still open, close it and re-launch the CMD program to because python.exe is just added into the PATH environment variable.
@@ -47,12 +47,12 @@ pip install openvino-dev
 ```
 Navigate to the open_model_zoo\tools\model_tools directory, and install the omz_tools package
 ```sh
-cd C:\Users\\<your_user_name>\open_model_zoo\tools\model_tools
+cd %userprofile%\open_model_zoo\tools\model_tools
 pip install .
 ```
 After installing the model_tools package, use this command to download the human-pose-estimation models from a file server.
 ```sh
-python ~/open_model_zoo/tools/model_tools/src/omz_tools/omz_downloader.py --list ~/open_model_zoo/demos/human_pose_estimation_demo/cpp/models.lst -o ~/open_model_zoo/models
+python %userprofile%\open_model_zoo\tools\model_tools\omz_downloader.py --list %userprofile%\open_model_zoo\demos\human_pose_estimation_demo\cpp\models.lst -o %userprofile%\open_model_zoo\models
 ```
 It will download 23 files saved in ~/open_model_zoo/models/intel and ~/open_model_zoo/models/public although we only need 2 of them. However, this command is better than the Intel's instruction "omz_downloader --all" because it will download a lot of files and take a long time.
 
@@ -60,13 +60,36 @@ It will download 23 files saved in ~/open_model_zoo/models/intel and ~/open_mode
 Suppose your Open Model Zoo is installed in ~/open_model_zoo.
 Please git clone this repository into the demos directory.
 ```sh
-cd ~/open_model_zoo/demos
-git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
+cd %userprofile%\open_model_zoo\demos
+git clone https://github.com/yangchihyuan/ZenboNurseHelper_Windows.git
 ```
+
+# Install Visual Studio 2019
+We need a compiler and a linker for our project, and OpenVINO 2024.3 suggest using Visual Studio 2019. Be aware, it does not support Visual Studio 2022 until now. However, Microsoft has treated Visual Studio 2019 as an out-of-life-cycled product and removed the downloaded link. We use a third-party software repository to download the Visual Studio 2019 from this [(Link)](https://www.techspot.com/downloads/7241-visual-studio-2019.html).
+
+# Install CUDA
+A GPU will greatly shorten the computational time for the voice recognition program Whisper.cpp used in our program. If your computer is equipped with an NVidia GPU, you need to install CUDA to enable Visual Studio 2019's capacity to use it.
+You can download the latest CUDA Toolkit from this [(Link)](https://developer.nvidia.com/cuda-downloads). 
 
 # Install Dependencies
 ## Protocol Buffer 
-We use this tool to pass messages from our server program to the Android app.
+We use this tool to pass messages from our server program to the Android app. To install Protocol Buffer, we use vcpkg. Thus, we need to install vcpkg before installing Protocol Buffer.
+Use these commands below to download the source code of vcpkg, and its tutorial is available at [(Link)](https://learn.microsoft.com/zh-tw/vcpkg/get_started/get-started-vs?pivots=shell-cmd).
+
+```sh
+cd %userprofile%
+git clone https://github.com/microsoft/vcpkg.git
+```
+Set required environment variables
+```sh
+cd vcpkg && bootstrap-vcpkg.bat
+```
+Build vcpkg by
+```sh
+
+```
+
+
 ```sh
 sudo apt install protobuf-compiler
 ```
