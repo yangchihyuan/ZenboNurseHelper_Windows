@@ -65,7 +65,9 @@ git clone https://github.com/yangchihyuan/ZenboNurseHelper_Windows.git
 ```
 
 # Install Visual Studio 2019
-We need a compiler and a linker for our project, and OpenVINO 2024.3 suggest using Visual Studio 2019. Be aware, it does not support Visual Studio 2022 until now. However, Microsoft has treated Visual Studio 2019 as an out-of-life-cycled product and removed the downloaded link. We use a third-party software repository to download the Visual Studio 2019 from this [(Link)](https://www.techspot.com/downloads/7241-visual-studio-2019.html).
+We need a compiler and a linker for our project, and OpenVINO 2024.3 suggest using Visual Studio 2019. Be aware, it does not support Visual Studio 2022 until now. However, Microsoft has treated Visual Studio 2019 as an out-of-life-cycled product and removed the downloaded link. We use a third-party software repository to download the Visual Studio 2019 from this [(Link)](https://www.techspot.com/downloads/7241-visual-studio-2019.html). The free Community Edition is enough for our project. When installing it, you need to mark the checkbox "Using C++ for desktop development".
+
+<img src="VS2019_Option.jpg" alt="VS2019_Option" height="150"/>
 
 # Install CUDA
 A GPU will greatly shorten the computational time for the voice recognition program Whisper.cpp used in our program. If your computer is equipped with an NVidia GPU, you need to install CUDA to enable Visual Studio 2019's capacity to use it.
