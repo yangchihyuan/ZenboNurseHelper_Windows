@@ -82,20 +82,15 @@ Use these commands below to download the source code of vcpkg, and its tutorial 
 cd %userprofile%
 git clone https://github.com/microsoft/vcpkg.git
 ```
-Set required environment variables
+Execute the boostrap-vcpkg.bat file, which will download an executable file vcpkg.exe into your vckpg file.
 ```sh
 cd vcpkg && bootstrap-vcpkg.bat
 ```
-Build vcpkg by
+Use the command to install Protocol Buffer. 
 ```sh
-
+vcpkg install protobuf protobuf:x64-windows
 ```
-
-
-```sh
-sudo apt install protobuf-compiler
-```
-It will install Protocol Buffer version 3.21.12-8.2.
+It will install not only protobuf but also many dependencies such as CMake, abseil-cpp, utf8-range, PowerShell, 7zip, and MinGW-w64. 
 
 ## OpenCV
 It is required by the open_model_zoo's human_pose_estimation demo, and we use it to show images captured by the Zenbo robot's camera.
