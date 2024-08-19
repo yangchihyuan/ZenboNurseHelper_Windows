@@ -74,71 +74,65 @@ A GPU will greatly shorten the computational time for the voice recognition prog
 You can download the latest CUDA Toolkit from this [(Link)](https://developer.nvidia.com/cuda-downloads). 
 
 # Install Dependencies
-## Protocol Buffer 
-We use this tool to pass messages from our server program to the Android app. To install Protocol Buffer, we use vcpkg. Thus, we need to install vcpkg before installing Protocol Buffer.
+## vcpkg
+The vcpkg program is Windows' package management tool for C++ libraries. It is a convenient way to install Protocol Buffer, which we use to pass messages from our server program to the Android app. 
 Use these commands below to download the source code of vcpkg, and its tutorial is available at [(Link)](https://learn.microsoft.com/zh-tw/vcpkg/get_started/get-started-vs?pivots=shell-cmd).
 
 ```sh
 cd %userprofile%
 git clone https://github.com/microsoft/vcpkg.git
 ```
-Execute the boostrap-vcpkg.bat file, which will download an executable file vcpkg.exe into your vckpg file.
+Execute the boostrap-vcpkg.bat file, which will download an executable file vcpkg.exe into your vcpkg file.
 ```sh
 cd vcpkg && bootstrap-vcpkg.bat
 ```
-Use the command to install Protocol Buffer. 
+
+## Protocol Buffer 
+Use the command to install Protocol Buffer after you install vcpkg. 
 ```sh
+cd %userprofile%\vcpkg
 vcpkg install protobuf protobuf:x64-windows
 ```
 It will install not only protobuf but also many dependencies such as CMake, abseil-cpp, utf8-range, PowerShell, 7zip, and MinGW-w64. 
 
 ## OpenCV
-It is required by the open_model_zoo's human_pose_estimation demo, and we use it to show images captured by the Zenbo robot's camera.
+OpenCV is a required library for the open_model_zoo's human_pose_estimation demo, and we use it to show images captured by the Zenbo robot's camera.
+To install it, please download the installation execute file for Windows from OpenCV official website [(Link)](https://opencv.org/releases/). The downloaded exe file is a self-unzip file. Unzip it to your %userprofile% folder, and you should get a subfolder opencv in your %userprofile% folder.
+
+Alternatively, you can use vcpkg to install OpenCV.
 ```sh
-sudo apt install libopencv-dev
+cd %userprofile%\vcpkg
+vcpkg install opencv
 ```
-It will install OpenCV version 4.6.0.
+However, there are two disadvantages. First, OpenCV's official website's version is relatively newer than the one installed by vcpkg, for example 4.10 vs 4.8. Second, OpenCV is a huge library with several dependencies such as zlib, libpng, libjpeg-turbo, libwebp, tiff, tiny-dnn. As a result, it takes a while for vcpkg to build all files. If you do not want to wait, do not use vcpkg to install OpenCV.
 
 ## libgflags
-It is a tool library to help us parse command arguments
+It is a tool library to help us parse command arguments. To install it, use
 ```sh
-sudo apt install libgflags-dev
+cd %userprofile%\vcpkg
+vcpkg install libgflags-dev
 ```
 It will install libgflags 2.2.2-2.
 
 ## Qt 
-We use it to create our GUI
-```sh
-sudo apt install qt6-base-dev
-sudo apt install qt6-multimedia-dev
-```
-It will install Qt version 6.4.2.
+We use Qt to create our GUI. To install Qt, you need to not only download the installation file from Qt's website [(Link)](https://www.qt.io/download-dev) and register for a license, which is free and necessary when you install Qt.
+There are several Qt components for different platforms. Please only mark the MSVC 2019 64-bit and unmark all other platforms. Otherwise, you will use 40 Gb disk space for other platforms. Among the additional libraries, please mark Qt Multimedia because our program uses it. 
+
+<img src="Qt_setting.jpg" alt="Qt_setting.jpg" height="250"/>
 
 ### Hint
-The two commands to install Qt base and multimedia libraries allow you to compile this project. However, they do not isntall Qt Designer, a convenient tool to the GUI file mainwindow.ui. If you want to install Qt Designer, you need to use this command
-```sh
-sudo apt install qtcreator
-```
-The Qt creator takes more than 1G disk space because it requires many libraries. Once installed, you can launch the program to open the mainwindow.ui file with Qt Designer.
+The Qt base and multimedia libraries allow you to compile this project. However, they do cover Qt Creator, a convenient tool to create the GUI file mainwindow.ui. If you want to install Qt Creator, you need to mark its checkbox.
 
-![QtDesigner_Open](QtDesigner_Open.jpg "QtDesigner_Open")
+<img src="Qt_setting.jpg" alt="Qt_setting2.jpg" height="250"/>
 
 ## PortAudio 
 We use it to play voice on the server transmitted from the Android app and received from the robot's microphone.
 There is no package made for the Ubuntu system, and we need to compile it from downloaded source files, which are available on its GitHub page
 ```sh
-cd ~
+cd %userprofile%\vcpkg
 git clone https://github.com/PortAudio/portaudio.git
 ```
-There is an instruction page teaching how to compile and install PortAudio [(Link)](https://www.portaudio.com/docs/v19-doxydocs/compile_linux.html)
-However, as the page claims it is not reviewed, we modified its commands to
-```sh
-sudo apt-get install libasound2-dev
-cd ~/portaudio
-./configure
-make
-sudo make install
-```
+There is an instruction page teaching how to compile and install PortAudio [(Link)](https://www.portaudio.com/docs/v19-doxydocs/compile_windows.html). however, it was edited 10 years ago and outdated. Let's clarify our steps here. (1) we do not need DirectX, so we do not need to install the DirectX SDK. (2) we do not use ASIO in our program, so we do not need to install the ASIO library. (3) we use Visual Studio 2019 to build PortAudio, and there is no instruction steps for Visual Studio 2019. We found that the instruction written for Visual Studio 2010 does not work for 2019, i.e. opening the sln file in the build\msvc folder did not work. Even though Visual Studio 2019 can convert the old sln file into a new format, there are error messages when you build the solution. Thus, to build PortAudio, we use CMake, which is supported by Visual Studio 2019. To do it, use Visual Studio 2019 to open the folder C:\Users\\<your_user_name>\portaudio which contains a CMakeLists.txt file. Visual Studio will automatically configure the CMake file. Different from the sln file which contains 4 configurations (32-bit and 64-bit, Debug and Release), there is only 1 configuration in the CMake file (x64-Debug). However, it is enough for us. Once the CMake file is loaded by Visual Studio 2019, just click build-->build all on the menu or press Ctrl+Shift+B. In the Output Panel, you will see a message that two files are built: portaudio_static_x64.lib and portaudio_x64.dll. They are in the folder C:\Users\\<your_user_name>\portaudio\out\build\x64-Debug.
 
 ## whisper.cpp
 It is an voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the Zenbo robot to speak out.
