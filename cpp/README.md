@@ -134,43 +134,46 @@ git clone https://github.com/PortAudio/portaudio.git
 ```
 There is an instruction page teaching how to compile and install PortAudio [(Link)](https://www.portaudio.com/docs/v19-doxydocs/compile_windows.html). however, it was edited 10 years ago and outdated. Let's clarify our steps here. (1) we do not need DirectX, so we do not need to install the DirectX SDK. (2) we do not use ASIO in our program, so we do not need to install the ASIO library. (3) we use Visual Studio 2019 to build PortAudio, and there is no instruction steps for Visual Studio 2019. We found that the instruction written for Visual Studio 2010 does not work for 2019, i.e. opening the sln file in the build\msvc folder did not work. Even though Visual Studio 2019 can convert the old sln file into a new format, there are error messages when you build the solution. Thus, to build PortAudio, we use CMake, which is supported by Visual Studio 2019. To do it, use Visual Studio 2019 to open the folder C:\Users\\<your_user_name>\portaudio which contains a CMakeLists.txt file. Visual Studio will automatically configure the CMake file. Different from the sln file which contains 4 configurations (32-bit and 64-bit, Debug and Release), there is only 1 configuration in the CMake file (x64-Debug). However, it is enough for us. Once the CMake file is loaded by Visual Studio 2019, just click build-->build all on the menu or press Ctrl+Shift+B. In the Output Panel, you will see a message that two files are built: portaudio_static_x64.lib and portaudio_x64.dll. They are in the folder C:\Users\\<your_user_name>\portaudio\out\build\x64-Debug.
 
+## CUDA
+Whisper.cpp is an voice-to-text library and we utilize it on our server-side program to quickly generate sentences from voice spoken out by an operator, which will be sent to the Zenbo robot to speak out. Because whisper.cpp runs slowly if it only uses CPUs, it is best to use a GPU to accelerate its computation.
+If your computer is equipped with an NVidia GPU, you need to install CUDA toolkit to enable the GPU program compilation.
+CUDA is free available at NVidia's official website [(Link)](https://developer.nvidia.com/cuda-downloads). 
+
 ## whisper.cpp
-It is an voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the Zenbo robot to speak out.
-There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
+To use whisper.cpp, we need to compile it from its source files, which are available from from its GitHub repository
 ```sh
-cd ~
+cd %userprofile%
 git clone https://github.com/ggerganov/whisper.cpp.git
 ```
-We need a Whisper model. In out program, we use the base model for Mandarin.
+There are several ggml models (from tiny to large) listed on the whipser.cpp webpage. The larger the model size, the slower the speed, but the more accurate the converted sentence. We suggest using the base model as a balance between speed and accuracy. If the language you want to convert is not English, use the base model rather than the base.en one.
 ```sh
-cd ~/whisper.cpp
-bash ./models/download-ggml-model.sh base
+cd %userprofile%\whisper.cpp
+call models\download-ggml-model.cmd base
 ```
 It will download ggml-base.bin from the HuggingFace website.
-We need its compiled .o files, which will be used in our server-side program.
-```sh
-make
-```
-Because whisper.cpp runs slowly if it only uses CPUs, we need a GPU to accelerate its computation. In our case, Ubuntu desktop 24.04 installs the NVidia-driver 535 by default. It is not the latest one, but still works.
+To build whipser.cpp, we use Visual Studio 2019's CMake support, like the way we do for portaudio. Launch Visual Studio 2019, and then open the folder C:\Users\\<your_user_name>\whisper.cpp. Visual Studio 2019 will automatically recognize the CMakeLists.txt file in it. Next, click the build button, whisper.dll will be created in this folder C:\Users\\<your_user_name>\whisper.cpp\out\build\x64-Debug\bin
+
+Notification: whisper.cpp files contain a few unicode characters, which is incompatible with BIG5, the default encoding system of Windows 11 Traditional Chinese Edition. If that is your Windows 11 edition, you need to turn on the support of Unicode UTF-8. However, it will make some programs unable to work, such as the VBA in an Access database, and some programs written in BIG5.
+
+<img src="Windows11_Unicode.jpg" alt="Windows11_Unicode.jpg" height="250"/>
+<img src="Windows11_Unicode_Eng.jpg" alt="Windows11_Unicode_Eng.jpg" height="250"/>
 
 # Compile and Run
-Run the OpenVINO's build_demos.sh in ~/open_model_zoo/demos to build this project, and an executable file 9_NurseHelper should be created at ~/omz_demos_build/intel64/Release/
-To make it easy, we make s build_demos.sh in the directory ~/open_model_zoo/demos/ZenboNurseHelper/cpp
+Run the OpenVINO's build_demos.cmd in C:\Users\\<your_user_name>\open_model_zoo\demos to build this project, and an executable file 9_NurseHelper should be created at C:\Users\\<your_user_name>\omz_demos_build\intel64\Release
+To make it easy, we make a build_demos_Windows.cmd file in the working directory C:\Users\\<your_user_name>\open_model_zoo\demos\ZenboNurseHelper\cpp
 ```sh
-cd ~/open_model_zoo/demos/ZenboNurseHelper/cpp
-./build_demos.sh
+cd %userprofile%\open_model_zoo\demos\ZenboNurseHelper\cpp
+build_demos_Windows.cmd
 ```
-This command will compile all open_model_zoo's demos, including our ZenboNurseHelper. After make the execute file 9_NurseHelper, execute the command to launch it.
+This command will build all open_model_zoo's demos, including our ZenboNurseHelper. After make the execute file 9_NurseHelper, execute the command to launch it.
 ```sh
-./run_server_side_program.sh
+cd %userprofile%\open_model_zoo\demos\ZenboNurseHelper\cpp
+run_on_Windows.cmd
 ```
-The program easily crashes because we use several libraries containing bugs. To detect those bugs, use this command
-```sh
-./run_server_side_program.sh debug
-```
-which use gdb for debugging.
 
 # Known problems and workarounds
-## Qt FreeType crash problem
-Our program often crashes in this function FT_Load_Glyph () at /lib/x86_64-linux-gnu/libfreetype.so.6, which is called by QFontEngineFT::loadGlyph(QFontEngineFT::QGlyphSet*, unsigned int, QFixedPoint const&, QFontEngine::GlyphFormat, bool, bool) const () at /home/chihyuan/Qt/6.7.2/gcc_64/lib/libQt6Gui.so.6. According to two blogs [(Link1)](https://stackoverflow.com/questions/40490414/cannot-trace-cause-of-crash-in-qt-program) [(Link2)](https://blog.csdn.net/weixin_41797797/article/details/105861978), it is a Qt bug only occurring on Linux. To avoid this problem, use the command in the terminal window before launching our program.
+## whisper.cpp only uses the CPU rather than a GPU
+Even though we set the parameter cparams.use_gpu = true, whisper.cpp still does not use the GPU. As a result, the voice recognition runs slowly. We find an open issue on the whisper.cpp GitHub repository [(Link)](https://github.com/ggerganov/whisper.cpp/issues/2214) mentioning this problem, but no solution is available.
 
+## crash problem
+When we launch the robot-side app and connect to the server-side program. Our program always crashes. We have not yet found a debugger on Windows to deal with the problem.
